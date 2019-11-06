@@ -32,10 +32,19 @@ void main(void){
 //strtok
 	while(command != "quit"){
 	if(strcmp("read", command) == 0){
+		//printf("BYE\n");
 		scanf("%s", arg1);
 		scanf("%s", arg2);
-		read(atoi(arg1), arg2, memory, registers);
-		}
+		length = strlen(arg1);
+		//printf("LENGTH %d\n", length);
+		//printf("%s ARG1\n", arg1);
+		//printf("%s ARG2\n", arg2);
+		//printf("%d *ARG2\n", *arg2);
+				read(atoi(arg1), arg2, memory, registers);
+		//for(i=0; i < length; i++){
+		
+
+	}
 	if(strcmp("prints", command) == 0){
 		prints(registers, memory, of, sf, zf);
 	}
@@ -112,7 +121,7 @@ void prints(char registers[], char memory[], int of, int sf, int zf){
 	int i, j;
 	for(i = 0; i < 4; i++){
 		if(registers[i] > 128){
-			printf("???\t");
+			error();
 		}
 		else{
 			printf("%d\t", registers[i]);
