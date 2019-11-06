@@ -10,24 +10,24 @@
 
 #define MAX 20
 
-char* deblank(char* array);
+//FUNCTION COMMENTS
 void error();
 void read(int data, char arg2[], int memory[], int registers[]);
-void prints();
+void prints(int registers[], int memory[], int of, int sf, int zf);
+void write(char arg1[], int registers[], int memory[]);
 
 void main(void){
 	char command[20];
 	char arg1[20];
 	char arg2[20];
 	int registers[4] = {150, 150, 150, 150};
-	int registerVal[4];
 	int memory[8] = {150, 150, 150, 150, 150, 150, 150, 150};
-	int zf = 8;
-	int sf = 7;
-	int of = 6;
+	int zf = 0;
+	int sf = 0;
+	int of = 0;
 	int i, length;
 	scanf("%s", command);
-		//scanf("%s", arg1);
+
 //strcasecmp
 //strtok
 	while(command != "quit"){
@@ -35,14 +35,20 @@ void main(void){
 		scanf("%s", arg1);
 		scanf("%s", arg2);
 		read(atoi(arg1), arg2, memory, registers);
-		}
+	}
+	
+	if(strcmp("write", command) == 0){
+		scanf("%s", arg1);
+		write(arg1, registers, memory);				
+	}
+	
 	if(strcmp("prints", command) == 0){
 		prints(registers, memory, of, sf, zf);
 	}
 	scanf("%s", command);
 	}
 }
-
+//SET OF FLAG
 void read(int data, char arg2[], int memory[], int registers[]){
 
 	int i, j;
@@ -93,6 +99,7 @@ void read(int data, char arg2[], int memory[], int registers[]){
 	for(j = 0; j < 8; j++){
 		if(memory[j] > 128){
 			printf("???\t");
+
 		}
 		else{
 			printf("%d\t", memory[j]);
@@ -108,8 +115,9 @@ void read(int data, char arg2[], int memory[], int registers[]){
 	}*/
 }
 
-void prints(char registers[], char memory[], int of, int sf, int zf){
-	int i, j;
+void prints(int registers[], int memory[], int of, int sf, int zf){
+
+	int i, j, k;
 	for(i = 0; i < 4; i++){
 		if(registers[i] > 128){
 			printf("???\t");
@@ -127,8 +135,23 @@ void prints(char registers[], char memory[], int of, int sf, int zf){
 		}
 	}
 	printf("%d\t", of);
-printf("%d\t", sf);
-printf("%d\t", zf);
+	printf("%d\t", sf);
+	printf("%d\t", zf);
+	printf("\n");
+	for(k = 0; k < 15; k++){
+		printf("--\t");
+	}
+	printf("\n");
+	for(i = 0; i < 4; i++){
+		printf("R%d\t", i);
+	}
+	for(j = 0; j < 8; j++){
+		printf("M%d\t", j);
+	}
+	printf("ZF\t");
+	printf("SF\t");
+	printf("OF");
+
 }
 
 char* deblank(char* array){
@@ -149,3 +172,42 @@ void error(){
 }
 
 
+
+void write(char arg1[], int registers[], int memory[]){
+	if(strcmp(arg1, "m0") == 0){
+		printf("%d\n", memory[0]);
+	}
+	if(strcmp(arg1, "m1") == 0){
+		printf("%d\n", memory[1]);
+	}
+	if(strcmp(arg1, "m2") == 0){
+		printf("%d\n", memory[2]);
+	}
+	if(strcmp(arg1, "m3") == 0){
+		printf("%d\n", memory[3]);
+	}
+	if(strcmp(arg1, "m4") == 0){
+		printf("%d\n", memory[4]);
+	}
+	if(strcmp(arg1, "m5") == 0){
+		printf("%d\n", memory[5]);
+	}
+	if(strcmp(arg1, "m6") == 0){
+		printf("%d\n", memory[6]);
+	}
+	if(strcmp(arg1, "m7") == 0){
+		printf("%d\n", memory[7]);
+	}
+	if(strcmp(arg1, "r0") == 0){
+		printf("%d\n", registers[0]);
+	}
+	if(strcmp(arg1, "r1") == 0){
+		printf("%d\n", registers[1]);
+	}
+	if(strcmp(arg1, "r2") == 0){
+		printf("%d\n", registers[2]);
+	}
+	if(strcmp(arg1, "r3") == 0){
+		printf("%d\n", registers[3]);
+	}
+}
