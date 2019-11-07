@@ -15,6 +15,8 @@ void error();
 void read(int data, char arg2[], int memory[], int registers[]);
 void prints(int registers[], int memory[], int of, int sf, int zf);
 void write(char arg1[], int registers[], int memory[]);
+void comp(char arg1[], char arg2[], int register1[], int register2[], int zf, int sf);
+void add(char array1[], char array2[]);
 
 void main(void){
 	char command[20];
@@ -25,7 +27,7 @@ void main(void){
 	int zf = 0;
 	int sf = 0;
 	int of = 0;
-	int i, length;
+
 	scanf("%s", command);
 
 //strcasecmp
@@ -45,12 +47,21 @@ void main(void){
 	if(strcmp("prints", command) == 0){
 		prints(registers, memory, of, sf, zf);
 	}
+	
+	if(strcmp("comp", command) == 0){
+		scanf("%s", arg1);
+		scanf("%s", arg2);
+		comp(arg1, arg2, registers, registers, zf, sf);
+	}
+	
 	scanf("%s", command);
 	}
 }
 //SET OF FLAG
 void read(int data, char arg2[], int memory[], int registers[]){
-
+	//if(data < 127 || data < -128){
+		//of = 1;
+	//}
 	int i, j;
 	if(strcmp(arg2, "m0") == 0){
 		memory[0] = data;
@@ -210,4 +221,47 @@ void write(char arg1[], int registers[], int memory[]){
 	if(strcmp(arg1, "r3") == 0){
 		printf("%d\n", registers[3]);
 	}
+}
+
+void comp(char arg1[], char arg2[], int register1[], int register2[], int zf, int sf){
+ int data1; 
+ int data2;
+		if(strcmp(arg1, "r0") == 0){
+			data1 = register1[0];
+		}	
+		 if(strcmp(arg1, "r1") == 0){
+			data1 = register1[1];
+		}	
+		 if(strcmp(arg1, "r2") == 0){
+			data1 = register1[2];
+		}	
+		 if(strcmp(arg1, "r3") == 0){
+			data1 = register1[3];
+		}	
+if(strcmp(arg2, "r0") == 0){
+			data2 =	register2[0];
+		}	
+		 if(strcmp(arg2, "r1") == 0){
+			data2 = register2[1];
+		}	
+		 if(strcmp(arg2, "r2") == 0){
+			data2 = register2[2];
+		}	
+		 if(strcmp(arg2, "r3") == 0){
+			data2 = register2[3];
+		}	
+		
+		if(data1 > data2){
+			zf = 0;
+			sf = 1;
+		}
+		if(data1 == data2){
+			zf = 1;
+			sf = 0;
+		}
+		if(data1 < data2){
+			zf = 0;
+			sf = 0;
+		}
+		printf("%d and %d", zf, sf);
 }
