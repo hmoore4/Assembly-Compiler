@@ -13,9 +13,10 @@
 //FUNCTION COMMENTS
 void error();
 void read(int data, char arg2[], int memory[], int registers[]);
-void prints(int registers[], int memory[], int of, int sf, int zf);
+void prints(int registers[], int memory[], int of[], int sf[], int zf[]);
 void write(char arg1[], int registers[], int memory[]);
-void comp(char arg1[], char arg2[], int register1[], int register2[], int zf, int sf);
+void comp(char arg1[], char arg2[], int register1[], int register2[], int zf[], int sf[]);
+void add(char arg1[], char arg2[]);
 
 void main(void){
 	char command[20];
@@ -23,9 +24,9 @@ void main(void){
 	char arg2[20];
 	int registers[4] = {150, 150, 150, 150};
 	int memory[8] = {150, 150, 150, 150, 150, 150, 150, 150};
-	int zf = 0;
-	int sf = 0;
-	int of = 0;
+	int zf[1] = {0};
+	int sf[1] = {0};
+	int of[1] = {0};
 
 	scanf("%s", command);
 
@@ -51,6 +52,14 @@ void main(void){
 		scanf("%s", arg1);
 		scanf("%s", arg2);
 		comp(arg1, arg2, registers, registers, zf, sf);
+	}
+	
+	if(strcmp("add", command) == 0){
+		scanf("%s", arg1);
+		scanf("%s", arg2);
+		//if(strcmp arg1, "r0/1/2/3"
+			//add(refister)
+		add(arg1, arg2);
 	}
 	
 	scanf("%s", command);
@@ -125,7 +134,7 @@ void read(int data, char arg2[], int memory[], int registers[]){
 	}*/
 }
 
-void prints(int registers[], int memory[], int of, int sf, int zf){
+void prints(int registers[], int memory[], int of[], int sf[], int zf[]){
 
 	int i, j, k;
 	for(i = 0; i < 4; i++){
@@ -144,9 +153,9 @@ void prints(int registers[], int memory[], int of, int sf, int zf){
 			printf("%d\t", memory[j]);
 		}
 	}
-	printf("%d\t", of);
-	printf("%d\t", sf);
-	printf("%d\t", zf);
+	printf("%d\t", of[0]);
+	printf("%d\t", sf[0]);
+	printf("%d\t", zf[0]);
 	printf("\n");
 	for(k = 0; k < 15; k++){
 		printf("--\t");
@@ -222,7 +231,7 @@ void write(char arg1[], int registers[], int memory[]){
 	}
 }
 
-void comp(char arg1[], char arg2[], int register1[], int register2[], int zf, int sf){
+void comp(char arg1[], char arg2[], int register1[], int register2[], int zf[], int sf[]){
  int data1; 
  int data2;
 		if(strcmp(arg1, "r0") == 0){
@@ -251,16 +260,20 @@ if(strcmp(arg2, "r0") == 0){
 		}	
 		
 		if(data1 > data2){
-			zf = 0;
-			sf = 1;
+			zf[0] = 0;
+			sf[0] = 1;
 		}
 		if(data1 == data2){
-			zf = 1;
-			sf = 0;
+			zf[0] = 1;
+			sf[0] = 0;
 		}
-		if(data1 < data2){
-			zf = 0;
-			sf = 0;
+		if(data1 < data2){//NOT CHANGING IN PRINTS
+			zf[0] = 0;
+			sf[0] = 0;
 		}
 		printf("%d and %d", zf, sf);
+}
+
+void add(char arg1[], char arg2[]){
+	
 }
