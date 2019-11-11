@@ -1,5 +1,3 @@
-
-
 /* Hunter Moore
  * 10/31/19
  * CPSC275 F
@@ -7,15 +5,12 @@
  * It recognizes a few commands and moves information to a set of registers and memory locations.
  */
 
-
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-
 #define MAX 20
 
-//FUNCTION COMMENTS. ADD COMMA. IF WRITE A UNENTERED REG, PRINT ???, CHANGE READ TO NOT DO REGISTERS, AMOUNT OF  ARGS, CASE SENSITIVITY
-void error();
+//FUNCTION COMMENTS. ADD COMMA. CHANGE READ TO NOT DO REGISTERS, AMOUNT OF  ARGS
 void read(int data, char arg2[], int memory[], int registers[], int of[]);
 void prints(int registers[], int memory[], int of[], int sf[], int zf[]);
 void write(char arg1[], int registers[], int memory[]);
@@ -26,8 +21,7 @@ void div(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
 void mod(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]);
 void move(char arg1[], char arg2[], int registers[], int memory[]);
 
-
-int main(void){
+void main(void){
 	char command[20];
 	char arg1[20];
 	char arg2[20];
@@ -39,54 +33,51 @@ int main(void){
 
 	scanf("%s", command);
 
-//strcasecmp
 //strtok
-	while(strcmp("quit", command) != 0){
-	if(strcmp("read", command) == 0){
+	while(strcasecmp("quit", command) != 0){
+	if(strcasecmp("read", command) == 0){
 		scanf("%s", arg1);
 		scanf("%s", arg2);
 		read(atoi(arg1), arg2, memory, registers, of);
 	}
 
-	if(strcmp("write", command) == 0){
+	if(strcasecmp("write", command) == 0){
 		scanf("%s", arg1);
 		write(arg1, registers, memory);
 	}
 
-	if(strcmp("prints", command) == 0){
+	if(strcasecmp("prints", command) == 0){
 		prints(registers, memory, of, sf, zf);
 	}
 
-	if(strcmp("comp", command) == 0){
+	if(strcasecmp("comp", command) == 0){
 		scanf("%s", arg1);
 		scanf("%s", arg2);
 		comp(arg1, arg2, registers, registers, zf, sf);
 	}
 
-	if(strcmp("add", command) == 0){
+	if(strcasecmp("add", command) == 0){
 		scanf("%s", arg1);
 		scanf("%s", arg2);
-		//if(strcmp arg1, "r0/1/2/3"
-			//add(refister)
 		add(arg1, arg2, registers, memory, of, zf, sf);
 	}
 	
-	if(strcmp("sub", command) == 0){
+	if(strcasecmp("sub", command) == 0){
 		scanf("%s", arg1);
 		scanf("%s", arg2);
 		sub(arg1, arg2, registers, memory, of, zf, sf);
 	}
-	if(strcmp("div", command) == 0){
+	if(strcasecmp("div", command) == 0){
 		scanf("%s", arg1);
 		scanf("%s", arg2);
 		div(arg1, arg2, registers, memory, of, zf, sf);
 	}
-	if(strcmp("mod", command) == 0){
+	if(strcasecmp("mod", command) == 0){
 		scanf("%s", arg1);
 		scanf("%s", arg2);
 		mod(arg1, arg2, registers, memory, of, zf, sf);
 	}
-	if(strcmp("move", command) == 0){
+	if(strcasecmp("move", command) == 0){
 		scanf("%s", arg1);
 		scanf("%s", arg2);
 		move(arg1, arg2, registers, memory);
@@ -101,42 +92,31 @@ void read(int data, char arg2[], int memory[], int registers[], int of[]){
 	if(data > 127 || data < -128){
 		of[0] = 1;
 	}
-	if(strcmp(arg2, "m0") == 0){
+	if(strcasecmp(arg2, "m0") == 0){
 		memory[0] = data;
 	}
-	if(strcmp(arg2, "m1") == 0){
+	if(strcasecmp(arg2, "m1") == 0){
 		memory[1] = data;
 	}
-	if(strcmp(arg2, "m2") == 0){
+	if(strcasecmp(arg2, "m2") == 0){
 		memory[2] = data;
 	}
-	if(strcmp(arg2, "m3") == 0){
+	if(strcasecmp(arg2, "m3") == 0){
 		memory[3] = data;
 	}
-	if(strcmp(arg2, "m4") == 0){
+	if(strcasecmp(arg2, "m4") == 0){
 		memory[4] = data;
 	}
-	if(strcmp(arg2, "m5") == 0){
+	if(strcasecmp(arg2, "m5") == 0){
 		memory[5] = data;
 	}
-	if(strcmp(arg2, "m6") == 0){
+	if(strcasecmp(arg2, "m6") == 0){
 		memory[6] = data;
 	}
-	if(strcmp(arg2, "m7") == 0){
+	if(strcasecmp(arg2, "m7") == 0){
 		memory[7] = data;
 	}
-	if(strcmp(arg2, "r0") == 0){
-		registers[0] = data;
-	}
-	if(strcmp(arg2, "r1") == 0){
-		registers[1] = data;
-	}
-	if(strcmp(arg2, "r2") == 0){
-		registers[2] = data;
-	}
-	if(strcmp(arg2, "r3") == 0){
-		registers[3] = data;
-	}
+
 }
 
 void prints(int registers[], int memory[], int of[], int sf[], int zf[]){
@@ -175,79 +155,135 @@ void prints(int registers[], int memory[], int of[], int sf[], int zf[]){
 	printf("OF\t");
 	printf("SF\t");
 	printf("ZF\t");
-
-
-
 	printf("\n");
 }
 
 
-
-
 void write(char arg1[], int registers[], int memory[]){
-	if(strcmp(arg1, "m0") == 0){
-		printf("%d\n", memory[0]);
+	
+	if(strcasecmp(arg1, "m0") == 0){
+		if(memory[0] > 127 || memory[0] < -128){
+			printf("???\n");
+		}
+		else{
+			printf("%d\n", memory[0]);
+		}
 	}
-	if(strcmp(arg1, "m1") == 0){
-		printf("%d\n", memory[1]);
+	if(strcasecmp(arg1, "m1") == 0){
+		if(memory[1] > 127 || memory[1] < -128){
+			printf("???\n");
+		}
+		else{
+			printf("%d\n", memory[1]);
+		}
 	}
-	if(strcmp(arg1, "m2") == 0){
-		printf("%d\n", memory[2]);
+	if(strcasecmp(arg1, "m2") == 0){
+		if(memory[2] > 127 || memory[2] < -128){
+			printf("???\n");
+		}
+		else{
+			printf("%d\n", memory[2]);
+		}
 	}
-	if(strcmp(arg1, "m3") == 0){
-		printf("%d\n", memory[3]);
+	if(strcasecmp(arg1, "m3") == 0){
+		if(memory[3] > 127 || memory[3] < -128){
+			printf("???\n");
+		}
+		else{
+			printf("%d\n", memory[3]);
+		}
 	}
-	if(strcmp(arg1, "m4") == 0){
-		printf("%d\n", memory[4]);
+	if(strcasecmp(arg1, "m4") == 0){
+		if(memory[4] > 127 || memory[4] < -128){
+			printf("???\n");
+		}
+		else{
+			printf("%d\n", memory[4]);
+		}
 	}
-	if(strcmp(arg1, "m5") == 0){
-		printf("%d\n", memory[5]);
+	if(strcasecmp(arg1, "m5") == 0){
+		if(memory[5] > 127 || memory[5] < -128){
+			printf("???\n");
+		}
+		else{
+			printf("%d\n", memory[5]);
+		}
 	}
-	if(strcmp(arg1, "m6") == 0){
-		printf("%d\n", memory[6]);
+	if(strcasecmp(arg1, "m6") == 0){
+		if(memory[6] > 127 || memory[6] < -128){
+			printf("???\n");
+		}
+		else{
+			printf("%d\n", memory[6]);
+		}
 	}
-	if(strcmp(arg1, "m7") == 0){
-		printf("%d\n", memory[7]);
+	if(strcasecmp(arg1, "m7") == 0){
+		if(memory[7] > 127 || memory[7] < -128){
+			printf("???\n");
+		}
+		else{
+			printf("%d\n", memory[7]);
+		}
 	}
-	if(strcmp(arg1, "r0") == 0){
-		printf("%d\n", registers[0]);
+	if(strcasecmp(arg1, "r0") == 0){
+		if(registers[0] > 127 || registers[0] < -128){
+			printf("???\n");
+		}
+		else{
+			printf("%d\n", registers[0]);
+		}
 	}
-	if(strcmp(arg1, "r1") == 0){
-		printf("%d\n", registers[1]);
+	if(strcasecmp(arg1, "r1") == 0){
+		if(registers[1] > 127 || registers[1] < -128){
+			printf("???\n");
+		}
+		else{	
+			printf("%d\n", registers[1]);
+		}
 	}
-	if(strcmp(arg1, "r2") == 0){
-		printf("%d\n", registers[2]);
+	if(strcasecmp(arg1, "r2") == 0){
+		if(registers[2] > 127 || registers[2] < -128){
+			printf("???\n");
+		}
+		else{
+			printf("%d\n", registers[2]);
+		}
 	}
-	if(strcmp(arg1, "r3") == 0){
-		printf("%d\n", registers[3]);
+	if(strcasecmp(arg1, "r3") == 0){
+		if(registers[3] > 127 || registers[3] < -128){
+			printf("???\n");
+		}
+		else{
+			printf("%d\n", registers[3]);
+		}
 	}
 }
 
 void comp(char arg1[], char arg2[], int register1[], int register2[], int zf[], int sf[]){
  int data1;
  int data2;
-		if(strcmp(arg1, "r0") == 0){
+		if(strcasecmp(arg1, "r0") == 0){
 			data1 = register1[0];
 		}
-		 if(strcmp(arg1, "r1") == 0){
+		 if(strcasecmp(arg1, "r1") == 0){
 			data1 = register1[1];
 		}
-		 if(strcmp(arg1, "r2") == 0){
+		 if(strcasecmp(arg1, "r2") == 0){
 			data1 = register1[2];
 		}
-		 if(strcmp(arg1, "r3") == 0){
+		 if(strcasecmp(arg1, "r3") == 0){
 			data1 = register1[3];
 		}
-		if(strcmp(arg2, "r0") == 0){
+		if(strcasecmp(arg2, "r0") == 0){
 			data2 =	register2[0];
 		}
-		 if(strcmp(arg2, "r1") == 0){
+		 if(strcasecmp(arg2, "r1") == 0){
 			data2 = register2[1];
 		}
-		 if(strcmp(arg2, "r2") == 0){
+		 if(strcasecmp(arg2, "r2") == 0){
 			data2 = register2[2];
 		}
-		 if(strcmp(arg2, "r3") == 0){
+		 if(strcasecmp(arg2, "r3") == 0){
 			data2 = register2[3];
 		}
 
