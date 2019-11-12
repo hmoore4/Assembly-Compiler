@@ -10,24 +10,25 @@
 #include <ctype.h>
 #define MAX 20
 
-//FUNCTION COMMENTS. ADD COMMA. CHANGE READ TO NOT DO REGISTERS, AMOUNT OF  ARGS
-void read(int data, char arg2[], int memory[], int registers[], int of[]);
+//FUNCTION COMMENTS. ADD COMMA. AMOUNT OF  ARGS
+void read(int data, char arg2[], int memory[], int of[]);
 void prints(int registers[], int memory[], int of[], int sf[], int zf[]);
 void write(char arg1[], int registers[], int memory[]);
 void comp(char arg1[], char arg2[], int register1[], int register2[], int zf[], int sf[]);
 void add(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]);
 void sub(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]);
+void mult(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]);
 void div(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]);
 void mod(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]);
 void move(char arg1[], char arg2[], int registers[], int memory[]);
 
 void main(void){
-	char command[20];
+	char command[20];																								//Input arrays
 	char arg1[20];
 	char arg2[20];
-	int registers[4] = {150, 150, 150, 150};
+	int registers[4] = {150, 150, 150, 150};												//Initialize values of array to values out of bounds
 	int memory[8] = {150, 150, 150, 150, 150, 150, 150, 150};
-	int zf[1] = {0};
+	int zf[1] = {0};																								//Flag arrays
 	int sf[1] = {0};
 	int of[1] = {0};
 
@@ -38,7 +39,7 @@ void main(void){
 	if(strcasecmp("read", command) == 0){
 		scanf("%s", arg1);
 		scanf("%s", arg2);
-		read(atoi(arg1), arg2, memory, registers, of);
+		read(atoi(arg1), arg2, memory, of);
 	}
 
 	if(strcasecmp("write", command) == 0){
@@ -67,6 +68,11 @@ void main(void){
 		scanf("%s", arg2);
 		sub(arg1, arg2, registers, memory, of, zf, sf);
 	}
+	if(strcasecmp("mult", command) == 0){
+		scanf("%s", arg1);
+		scanf("%s", arg2);
+		mult(arg1, arg2, registers, memory, of, zf, sf);
+	}
 	if(strcasecmp("div", command) == 0){
 		scanf("%s", arg1);
 		scanf("%s", arg2);
@@ -82,17 +88,29 @@ void main(void){
 		scanf("%s", arg2);
 		move(arg1, arg2, registers, memory);
 	}
+	else{
+		printf("???\n");
+	}
 
 	scanf("%s", command);
 	}
 }
 //SET OF FLAG
-void read(int data, char arg2[], int memory[], int registers[], int of[]){
+/* IN: Data is the number that is being read in to the memory
+ * IN: arg2 is the input of where the data will be held
+ * IN: memory accesses the array that holds the values of memory locations
+ * IN: of sets the overflow flag
+ * OUT: returns nothing
+ * SIDE EFFECT: OF flag set if output is too high/low. Memory array updated.
+ * This function updates the overflow flag if necessary and updates value of memory locations
+ * 
+*/
+void read(int data, char arg2[], int memory[], int of[]){
 	of[0] = 0;
-	if(data > 127 || data < -128){
+	if(data > 127 || data < -128){				//If the input is too high or too low, update the overflow flag
 		of[0] = 1;
 	}
-	if(strcasecmp(arg2, "m0") == 0){
+	if(strcasecmp(arg2, "m0") == 0){			//If argument equal to memory location, set the memory location to the data
 		memory[0] = data;
 	}
 	if(strcasecmp(arg2, "m1") == 0){
@@ -119,6 +137,12 @@ void read(int data, char arg2[], int memory[], int registers[], int of[]){
 
 }
 
+/* IN: Registers and memory array prins out contents of those arrays
+ * IN: of, sf, zf also print out contents of those arrays
+ * OUT: Returns nothing
+ * Side Effect: Nothing changed, just prints out contents of arrays
+ * 
+*/
 void prints(int registers[], int memory[], int of[], int sf[], int zf[]){
 
 	int i, j, k;
@@ -158,7 +182,11 @@ void prints(int registers[], int memory[], int of[], int sf[], int zf[]){
 	printf("\n");
 }
 
-
+/* IN: arg1 is the input, registers and memory are the register and memory arrays
+ * OUT: Returns nothing
+ * SIDE EFFECT: This function doesn't change anything, it just prints out the value at an index, if it exists
+ *
+*/
 void write(char arg1[], int registers[], int memory[]){
 	
 	if(strcasecmp(arg1, "m0") == 0){
@@ -338,14 +366,14 @@ void add(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
 
 //Check flags here
 void sub(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]){
-	 int data1 = arg1[1]- '0';
+	int data1 = arg1[1]- '0';
   int data2 = arg2[1] - '0';
 	of[0] = 0;
 	zf[0] = 0;
 	sf[0] = 0;
 	
 
-		if(arg1[0] == 'm' && arg2[0] == 'm'){
+	if(arg1[0] == 'm' && arg2[0] == 'm'){
 		printf("???\n");
 	}
 	
@@ -368,6 +396,42 @@ void sub(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
 		sf[0] = 1;
 	}
 }
+
+void mult(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]){
+	int data1 = arg1[1]- '0';
+  int data2 = arg2[1] - '0';
+	of[0] = 0;
+	zf[0] = 0;
+	sf[0] = 0;
+	
+	if(arg1[0] == 'm' && arg2[0] == 'm'){
+		printf("???\n");
+	}
+	
+	if(arg1[0] == 'r' && arg2[0] == 'm'){
+    registers[0] =  registers[data1] * memory[data2];
+	}
+	if(arg1[0] == 'r' && arg2[0] == 'r'){
+		registers[0] =  registers[data2] * registers[data1];
+	}
+	if(arg1[0] == 'm' && arg2[0] == 'r'){
+		registers[0] =  memory[data1] * registers[data2];
+	}
+	if (registers[0] > 127 || registers[0] < -128){
+		of[0] = 1;
+	}
+	if(registers[0] == 0){
+		zf[0] = 1;
+	}
+	if(registers[0] < 0){
+		sf[0] = 1;
+	}
+	
+}
+
+
+
+
 
 void div(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]){
 	int data1 = arg1[1]- '0';
