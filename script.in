@@ -1,0 +1,19 @@
+rEad 5, m6
+prints
+move m6, r1
+add m6, r1
+read 99, m1
+read 4, m7
+prints
+mult m6, r1
+prints
+move m1, r3
+sub r1, m1
+prints
+mod m1, r1
+add m1, r1
+move m1, r2
+move m1, r1
+comp r2, r1
+prints
+quit
