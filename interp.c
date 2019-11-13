@@ -300,7 +300,10 @@ void write(char arg1[], int registers[], int memory[]){
 void comp(char arg1[], char arg2[], int register1[], int register2[], int zf[], int sf[]){
   int data1;
   int data2;
-  
+  if(arg1[0] == 'm' || arg2[0] == 'm'){				//Cannot do memory -> memory	
+    printf("???\n");	
+  }
+
   if(strcasecmp(arg1, "r0") == 0){			//Determines which registers
     data1 = register1[0];
   }
@@ -327,6 +330,10 @@ void comp(char arg1[], char arg2[], int register1[], int register2[], int zf[], 
   }
   else{
   	printf("???\n");
+  }
+  if((data1 > 127 || data1 < -128) || (data2 > 127 || data2 < -128)){
+  	printf("???\n");
+  	sf[0] = 0;
   }
 
   if(data1 > data2){									//Sets flags accordingly								
@@ -377,6 +384,9 @@ void add(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
   if(registers[0] < 0){
     sf[0] = 1;
   }
+  if(registers[0] > 127 || registers[0] < -128){
+  	printf("???\n");
+  }
 }
 
 /* IN: arg1, arg2 are input from user. Registers, memory are register and memory arrays. Of, zf, sf are flag arrays
@@ -414,6 +424,9 @@ void sub(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
   if(registers[0] < 0){
     sf[0] = 1;
   }
+  if(registers[0] > 127 || registers[0] < -128){
+  	printf("???\n");
+  }
 }
 /* IN: arg1, arg2 are input from user. Registers, memory are register and memory arrays. Of, zf, sf are flag arrays
  * OUT: returns nothing
@@ -448,6 +461,9 @@ void mult(char arg1[], char arg2[], int registers[], int memory[], int of[], int
   }
   if(registers[0] < 0){
     sf[0] = 1;
+  }
+  if(registers[0] > 127 || registers[0] < -128){
+  	printf("???\n");
   }
 }
 
@@ -501,6 +517,9 @@ void div(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
   if(registers[0] < 0){
     sf[0] = 1;
   }
+  if(registers[0] > 127 || registers[0] < -128){
+  	printf("???\n");
+  }
 }
 /* IN: arg1, arg2 are input from user. Registers, memory are register and memory arrays. Of, zf, sf are flag arrays
  * OUT: returns nothing
@@ -535,6 +554,9 @@ void mod(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
   }
   if(registers[0] < 0){
     sf[0] = 1;
+  }
+  if(registers[0] > 127 || registers[0] < -128){
+  	printf("???\n");
   }
 }
 
