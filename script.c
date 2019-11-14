@@ -24,6 +24,7 @@ void mult(char arg1[], char arg2[], int registers[], int memory[], int of[], int
 void divide(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]);
 void mod(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]);
 void move(char arg1[], char arg2[], int registers[], int memory[]);
+int checkinput(int num1, int num2);
 
 void main(void){
 
@@ -59,7 +60,6 @@ void main(void){
 
     else if(strcasecmp("comp", command) == 0){
       scanf("%s", arg1);
-      arg1[2] = '\0';
       scanf("%s", arg2);
       comp(arg1, arg2, registers, registers, zf, sf);
     }
@@ -149,7 +149,7 @@ void read(int data, char arg2[], int memory[], int of[]){
  * IN: of, sf, zf also print out contents of those arrays
  * OUT: Returns nothing
  * Side Effect: Nothing changed, just prints out contents of arrays
- * 
+ * Prints all of the register and memory location values
 */
 void prints(int registers[], int memory[], int of[], int sf[], int zf[]){
   int i, j, k;
@@ -292,6 +292,9 @@ void write(char arg1[], int registers[], int memory[]){
       printf("%d\n", registers[3]);
     }
   }
+  else{
+  	printf("???\n");
+  }
 }
 
 /* IN: arg1, arg2 are inputs from user. Register1, register2 are the two registers being compared. Zf, sf set the flags
@@ -300,51 +303,30 @@ void write(char arg1[], int registers[], int memory[]){
  * Compares two register values and sets flags accordingly.
  */
 void comp(char arg1[], char arg2[], int register1[], int register2[], int zf[], int sf[]){
-  int data1;
-  int data2;
-  if(arg1[0] == 'm' || arg2[0] == 'm'){				//Cannot do memory -> memory	
+  if(arg1 == 'm' || arg2 == 'm'){				//Cannot do memory -> memory	
     printf("???\n");	
   }
-  if((data1 > 127 || data1 < -128) || (data2 > 127 || data2 < -128)){
-  	printf("???\n");
-  }
-  if(strcasecmp(arg1, "r0") == 0){			//Determines which registers
-    data1 = register1[0];
-  }
-  if(strcasecmp(arg1, "r1") == 0){
-    data1 = register1[1];
-  }
-  if(strcasecmp(arg1, "r2") == 0){
-    data1 = register1[2];
-  }
-  if(strcasecmp(arg1, "r3") == 0){
-    data1 = register1[3];
-  }
-  if(strcasecmp(arg2, "r0") == 0){
-    data2 =	register2[0];
-  }
-  if(strcasecmp(arg2, "r1") == 0){
-    data2 = register2[1];
-  }
-  if(strcasecmp(arg2, "r2") == 0){
-    data2 = register2[2];
-  }
-  if(strcasecmp(arg2, "r3") == 0){
-    data2 = register2[3];
-  }
 
-  if(data1 > data2){									//Sets flags accordingly								
-    zf[0] = 0;
-    sf[0] = 1;
-  }
-  if(data1 == data2){
-    zf[0] = 1;
-    sf[0] = 0;
-  }
-  if(data1 < data2){
-    zf[0] = 0;
-    sf[0] = 0;
-  }
+  else if(arg1 == 'r'){			//Determines which registers
+    if(index1 >= 0 && index1 <= 3){
+    	if(arg2 == 'r'){
+    	  if(index2 >= 0 && index2 <= 3){
+    	    if(registers[index1] > registers[index2]){									//Sets flags accordingly								
+            zf[0] = 0;
+            sf[0] = 1;
+          }
+           if(registers[index1] == registers[index2]){
+             zf[0] = 1;
+             sf[0] = 0;
+           }
+           if(registers[index1] < registers[index2]){
+             zf[0] = 0;
+             sf[0] = 0;
+    	     }
+    	 }
+     }
+   }
+ }
 }
 
 /* IN: arg1, arg2 are input from user. Registers, memory are register and memory arrays. Of, zf, sf are flag arrays
@@ -355,6 +337,8 @@ void comp(char arg1[], char arg2[], int register1[], int register2[], int zf[], 
 void add(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]){
   int data1 = arg1[1]- '0';																	//Find index
   int data2 = arg2[1] - '0';
+  int input1;
+  int input2;
   of[0] = 0;																					//Reset flag
   zf[0] = 0;
   sf[0] = 0;
@@ -362,28 +346,49 @@ void add(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
   if(arg1[0] == 'm' && arg2[0] == 'm'){
     printf("???\n");																							//Cannot do memory->memory
   }
-																	
-  if(arg1[0] == 'r' && arg2[0] == 'm'){														//Calculations
-    registers[0] =  registers[data1] + memory[data2];
-  }																	
-  if(arg1[0] == 'r' && arg2[0] == 'r'){
-    registers[0] =  registers[data1] + registers[data2];
-  }
-  if(arg1[0] == 'm' && arg2[0] == 'r'){
-    registers[0] =  memory[data1] + registers[data2];
-  }
-  if (registers[0] > 127 || registers[0] < -128){
-    of[0] = 1;
-  }
-  if(registers[0] == 0){
-    zf[0] = 1;
-  }
-  if(registers[0] < 0){
-    sf[0] = 1;
-  }
-  if(registers[0] > 127 || registers[0] < -128){
-  	printf("???\n");
-  }
+
+		if(arg1[0] == 'r' && arg2[0] == 'm'){														//Calculations
+			input1 = registers[data1];
+			input2 = memory[data2];
+			if(checkinput(input1, input2)){
+		  	registers[0] =  registers[data1] + memory[data2];
+		  }
+		  else{
+		    printf("???\n");
+		    of[0] = 0;
+		  }
+		}																	
+		else if(arg1[0] == 'r' && arg2[0] == 'r'){
+      input1 = registers[data1];
+			input2 = registers[data2];
+			if(checkinput(input1, input2)){
+		    registers[0] =  registers[data1] + registers[data2];
+		  }
+		  else{
+		    printf("???\n");
+		    of[0] = 0;
+		  } 
+		}
+		else if(arg1[0] == 'm' && arg2[0] == 'r'){
+      input1 = memory[data1];
+			input2 = registers[data2];
+			if(checkinput(input1, input2)){
+		     registers[0] =  memory[data1] + registers[data2];
+		  }
+		  else{
+		    printf("???\n");
+		    of[0] = 0;
+		  } 		  
+		}
+		if (registers[0] > 127 || registers[0] < -128){
+		  of[0] = 1;
+		}
+		if(registers[0] == 0){
+		  zf[0] = 1;
+		}
+		if(registers[0] < 0){
+		  sf[0] = 1;
+		}
 }
 
 /* IN: arg1, arg2 are input from user. Registers, memory are register and memory arrays. Of, zf, sf are flag arrays
@@ -394,6 +399,8 @@ void add(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
 void sub(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]){
   int data1 = arg1[1]- '0';																	//Find index
   int data2 = arg2[1] - '0';
+  int input1;
+  int input2;
   of[0] = 0;
   zf[0] = 0;																								//Reset flag
   sf[0] = 0;
@@ -403,13 +410,34 @@ void sub(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
   }
 	
   if(arg1[0] == 'r' && arg2[0] == 'm'){
-    registers[0] =  memory[data2] - registers[data1];
+  	input1 = registers[data1];
+		input2 = memory[data2];
+		if(checkinput(input1, input2)){
+	  	registers[0] =  memory[data2] - registers[data1];
+	  }
+	  else{
+	    printf("???\n");
+	  }
   }
-  if(arg1[0] == 'r' && arg2[0] == 'r'){
-    registers[0] =  registers[data2] - registers[data1];
+  else if(arg1[0] == 'r' && arg2[0] == 'r'){
+    input1 = registers[data1];
+		input2 = registers[data2];
+		if(checkinput(input1, input2)){
+	    registers[0] =  registers[data2] - registers[data1];
+	  }
+	  else{
+	    printf("???\n");
+	  } 
   }
-  if(arg1[0] == 'm' && arg2[0] == 'r'){
-    registers[0] =  registers[data2] - memory[data1];
+  else if(arg1[0] == 'm' && arg2[0] == 'r'){
+    input1 = memory[data1];
+		input2 = registers[data2];
+		if(checkinput(input1, input2)){
+	     registers[0] =  registers[data2] - memory[data1];
+	  }
+	  else{
+	    printf("???\n");
+	  }
   }
   if (registers[0] > 127 || registers[0] < -128){
     of[0] = 1;
@@ -419,9 +447,6 @@ void sub(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
   }
   if(registers[0] < 0){
     sf[0] = 1;
-  }
-  if(registers[0] > 127 || registers[0] < -128){
-  	printf("???\n");
   }
 }
 /* IN: arg1, arg2 are input from user. Registers, memory are register and memory arrays. Of, zf, sf are flag arrays
@@ -432,6 +457,8 @@ void sub(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
 void mult(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]){
   int data1 = arg1[1]- '0';
   int data2 = arg2[1] - '0';								//Finds index
+  int input1;
+  int input2;
   of[0] = 0;
   zf[0] = 0;																//Reset flag
   sf[0] = 0;
@@ -441,13 +468,34 @@ void mult(char arg1[], char arg2[], int registers[], int memory[], int of[], int
   }
 	
   if(arg1[0] == 'r' && arg2[0] == 'm'){										//Calculations
-    registers[0] =  registers[data1] * memory[data2];
+  	input1 = registers[data1];
+		input2 = memory[data2];
+		if(checkinput(input1, input2)){
+	  	registers[0] =  registers[data1] * memory[data2];
+	  }
+	  else{
+	    printf("???\n");
+	  }
   }
   if(arg1[0] == 'r' && arg2[0] == 'r'){
-    registers[0] =  registers[data2] * registers[data1];
+    input1 = registers[data1];
+		input2 = registers[data2];
+		if(checkinput(input1, input2)){
+	    registers[0] =  registers[data1] * registers[data2];
+	  }
+	  else{
+	    printf("???\n");
+	  } 
   }
   if(arg1[0] == 'm' && arg2[0] == 'r'){
-    registers[0] =  memory[data1] * registers[data2];
+    input1 = memory[data1];
+		input2 = registers[data2];
+		if(checkinput(input1, input2)){
+	     registers[0] =  memory[data1] * registers[data2];
+	  }
+	  else{
+	    printf("???\n");
+	  }
   }
   if (registers[0] > 127 || registers[0] < -128){
     of[0] = 1;
@@ -457,9 +505,6 @@ void mult(char arg1[], char arg2[], int registers[], int memory[], int of[], int
   }
   if(registers[0] < 0){
     sf[0] = 1;
-  }
-  if(registers[0] > 127 || registers[0] < -128){
-  	printf("???\n");
   }
 }
 
@@ -471,27 +516,62 @@ void mult(char arg1[], char arg2[], int registers[], int memory[], int of[], int
 void divide(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]){
   int data1 = arg1[1]- '0';										//Finds index
   int data2 = arg2[1] - '0';
+  int input1;
+  int input2;
   of[0] = 0;
   zf[0] = 0;																	//Reset flag
   sf[0] = 0;
-
+	
   if(arg1[0] == 'm' && arg2[0] == 'm'){											//Cannot do memory->memory
     printf("???\n");
   }
 	
   if(arg1[0] == 'r' && arg2[0] == 'm'){												//Calculations
   	if(memory[data2] != 0){
-      registers[0] =  registers[data1] / memory[data2];
+      input1 = registers[data1];
+		  input2 = memory[data2];
+		  if(checkinput(input1, input2)){
+	  	  registers[0] =  registers[data1] / memory[data2];
+	    }
+	    else{
+	      printf("???\n");
+	    }
     }
     else{
       printf("???\n");
     }
   }
+  
   if(arg1[0] == 'r' && arg2[0] == 'r'){
-    registers[0] =  registers[data1] / registers[data2];
+   if(registers[data2] != 0){
+      input1 = registers[data1];
+	  	input2 = registers[data2];
+		  if(checkinput(input1, input2)){
+	      registers[0] =  registers[data1] / registers[data2];
+	    }
+	    else{
+	      printf("???\n");
+	    } 
+    }
+    else{
+      printf("???\n");
+    }
   }
+  
   if(arg1[0] == 'm' && arg2[0] == 'r'){
-    registers[0] =  memory[data1] / registers[data2];
+    if(registers[data2] != 0){
+      input1 = memory[data1];
+		  input2 = registers[data2];
+		  if(checkinput(input1, input2)){
+	       registers[0] =  memory[data1] / registers[data2];
+	    }
+	    else{
+	      printf("???\n");
+	    }
+    }
+    else{
+      printf("???\n");
+    }
   }
   if (registers[0] > 127 || registers[0] < -128){
     of[0] = 1;
@@ -502,9 +582,6 @@ void divide(char arg1[], char arg2[], int registers[], int memory[], int of[], i
   if(registers[0] < 0){
     sf[0] = 1;
   }
-  if(registers[0] > 127 || registers[0] < -128){
-  	printf("???\n");
-  }
 }
 /* IN: arg1, arg2 are input from user. Registers, memory are register and memory arrays. Of, zf, sf are flag arrays
  * OUT: returns nothing
@@ -514,6 +591,8 @@ void divide(char arg1[], char arg2[], int registers[], int memory[], int of[], i
 void mod(char arg1[], char arg2[], int registers[], int memory[], int of[], int zf[], int sf[]){
   int data1 = arg1[1]- '0';			//Finds index
   int data2 = arg2[1] - '0'; 
+  int input1;
+  int input2;
   of[0] = 0;										//Reset flag
   zf[0] = 0;
   sf[0] = 0;
@@ -523,13 +602,34 @@ void mod(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
   }
 	
   if(arg1[0] == 'r' && arg2[0] == 'm'){										//Calculations
-    registers[0] =  registers[data1] % memory[data2];
+      input1 = registers[data1];
+		  input2 = memory[data2];
+		  if(checkinput(input1, input2)){
+	  	  registers[0] =  registers[data1] % memory[data2];
+	    }
+	    else{
+	      printf("???\n");
+	    }
   }
   if(arg1[0] == 'r' && arg2[0] == 'r'){
-    registers[0] =  registers[data1] % registers[data2];
+      input1 = registers[data1];
+	  	input2 = registers[data2];
+		  if(checkinput(input1, input2)){
+	      registers[0] =  registers[data1] % registers[data2];
+	    }
+	    else{
+	      printf("???\n");
+	    } 
   }
   if(arg1[0] == 'm' && arg2[0] == 'r'){
-    registers[0] =  memory[data1] % registers[data2];
+      input1 = memory[data1];
+		  input2 = registers[data2];
+		  if(checkinput(input1, input2)){
+	       registers[0] =  memory[data1] % registers[data2];
+	    }
+	    else{
+	      printf("???\n");
+	    }
   }
   if (registers[0] > 127 || registers[0] < -128){				//Set flags
     of[0] = 1;
@@ -540,12 +640,7 @@ void mod(char arg1[], char arg2[], int registers[], int memory[], int of[], int 
   if(registers[0] < 0){
     sf[0] = 1;
   }
-  if(registers[0] > 127 || registers[0] < -128){
-  	printf("???\n");
-  }
 }
-
-
 /* IN: arg1, arg2 are input from user. Registers, memory are register and memory arrays.
  * OUT: returns nothing
  * SIDE EFFECTS: Updates either register or memory location
@@ -580,8 +675,25 @@ void move(char arg1[], char arg2[], int registers[], int memory[]){
     if(registers[data1] >= -127 && registers[data1] <= 128){
       registers[data2] = registers[data1];
     }
-  else{
-    printf("???\n");
+    else{
+      printf("???\n");
+    }
   }
- }
+  else{
+  	printf("???\n");
+  }
+}
+
+/* IN: Num1, num2 are the values of the index of an array
+ * OUT: returns 0 or 1. 0 is bad input 1 is good input
+ * SIDE EFFECT: Nothing is changed
+ * This function checks output to make sure it is in the range
+ */
+int checkinput(int num1, int num2){
+	if((num1 > 127 || num1 < -128) || (num2 > 127 || num2 < -128)){
+		return 0;
+	}
+	else{
+		return 1;
+	}
 }
